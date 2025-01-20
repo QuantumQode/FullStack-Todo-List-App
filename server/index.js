@@ -69,6 +69,29 @@ app.post('/register', (req, res) => {
     );
 });
 
+app.post('/login', (req, res) => {
+    const username = req.body.username;
+    const password = req.body.password;
+
+    //check if user exists
+    db.query(
+        'SELECT * FROM users WHERE userName = ? AND userPassword = ?',
+        [username, password],
+        (err, result) => {
+            if (err) {
+                console.error('Error checking user:', err);
+                res.status(500).send('Error checking user');
+            } else {
+                if (result.length > 0) {
+                    res.status(200).send('User logged in successfully');
+                } else {
+                    res.status(400).send('Incorrect username or password');
+                }
+            }
+        }
+    );
+});
+
 
 
 app.listen(3001, () => {
