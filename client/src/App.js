@@ -24,7 +24,7 @@ function App() {
       password: passwordReg
     }).then((response) => {
       // This line logs the response from the server to the console.
-      console.log(response);
+      console.log(response.data);
       // This line clears the username and password fields in the form after the user is successfully registered.
       setUsernameReg('');
       setPasswordReg('');
@@ -37,11 +37,17 @@ function App() {
       username: usernameLogin,
       password: passwordLogin
     }).then((response) => {
-      console.log(response);
-      setLoginStatus("Login Successful! Welcome " + usernameLogin);
-    }); 
-  }
-
+      // This line logs the response from the server to the console which is plain script.
+      setLoginStatus(response.data);
+    }).catch((error) => {
+      // Handling error
+      if (error.response) {
+        setLoginStatus(error.response.data);
+      } else {
+        setLoginStatus('An error occurred');
+      }
+  });
+};
   // This block of code contains the JSX for the registration form.
   return (
     <div className="App">
@@ -86,6 +92,9 @@ function App() {
         <button className='btn' onClick={login}>Login</button>
         
       </div>
+
+      {/* This div displays the login status message. */}
+      <h1>{loginStatus}</h1>
     </div>
   );
 }

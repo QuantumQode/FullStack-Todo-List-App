@@ -69,6 +69,7 @@ app.post('/register', (req, res) => {
     );
 });
 
+//create a post endpoint for user login
 app.post('/login', (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
@@ -80,7 +81,7 @@ app.post('/login', (req, res) => {
         (err, result) => {
             if (err) {
                 console.error('Error checking user:', err);
-                res.status(500).send('Error checking user');
+                res.status(500).send('Server error occured');
             } else {
                 if (result.length > 0) {
                     res.status(200).send('User logged in successfully');
