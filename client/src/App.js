@@ -100,9 +100,10 @@ function App() {
 
       {/* This div displays the registration status message. */}
       <h1>{registerStatus}</h1>
-      
+
       {/* This div displays the login status message. */}
       <h1>{loginStatus}</h1>
+      
 
       
     </div>

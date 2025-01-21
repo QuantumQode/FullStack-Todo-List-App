@@ -84,7 +84,7 @@ app.post('/login', (req, res) => {
                 res.status(500).send('Server error occured');
             } else {
                 if (result.length > 0) {
-                    res.status(200).send('User logged in successfully');
+                    res.status(200).send(username +  ' logged in successfully');
                 } else {
                     res.status(400).send('Incorrect username or password');
                 }
