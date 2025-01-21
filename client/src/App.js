@@ -11,11 +11,15 @@ function App() {
   // These 2 lines create state variables usernameReg and passwordReg, and functions setUsernameReg and setPasswordReg to update them.
   const [usernameReg, setUsernameReg] = useState('')
   const [passwordReg, setPasswordReg] = useState('')
+  // This line creates a state variable registerStatus and a function setRegisterStatus to update it.
+  const [registerStatus, setRegisterStatus] = useState('')
+
   // These 2 lines create state variables usernameLogin and passwordLogin, and functions setUsernameLogin and setPasswordLogin to update them.
   const [usernameLogin, setUsernameLogin] = useState('')
   const [passwordLogin, setPasswordLogin] = useState('')
   // This line creates a state variable loginStatus and a function setLoginStatus to update it.
   const [loginStatus, setLoginStatus] = useState('')
+  
 
   // Register function sends POST request to server to register user.
   const register = () => {
@@ -25,6 +29,7 @@ function App() {
     }).then((response) => {
       // This line logs the response from the server to the console.
       console.log(response.data);
+      setRegisterStatus(response.data);
       // This line clears the username and password fields in the form after the user is successfully registered.
       setUsernameReg('');
       setPasswordReg('');
@@ -93,8 +98,13 @@ function App() {
         
       </div>
 
+      {/* This div displays the registration status message. */}
+      <h1>{registerStatus}</h1>
+      
       {/* This div displays the login status message. */}
       <h1>{loginStatus}</h1>
+
+      
     </div>
   );
 }
