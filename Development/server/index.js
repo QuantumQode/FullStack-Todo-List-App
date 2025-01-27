@@ -14,6 +14,7 @@ const cors = require('cors');
 
 // The bcrypt library is used to hash passwords before storing them in the database.
 const bcrypt = require('bcrypt');
+const e = require('express');
 const saltRounds = 10;
 
 
@@ -61,7 +62,20 @@ app.post('/register', (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
 
-    bcrypt.hash(password, saltRounds, (err, hash) => {
+    // first we must check if the username already exists in the database
+    db.query('SELECT * FROM users WHERE userName = ?', [username], (err, result) => {
+        if (err) {
+            console.error('Error checking user:', err);
+            return res.status(500).send('Server error occured');
+            
+        }
+
+        if (result.length > 0) {
+            return res.status(400).send('User already exists');
+        }
+
+        //hash the password
+        bcrypt.hash(password, saltRounds, (err, hash) => {
         if (err) {
             // Log the error to the console and send a 500 status code to the client.
             console.error('Error hashing password:', err);
@@ -82,8 +96,8 @@ app.post('/register', (req, res) => {
                 }
             }
         );
-    });
-    
+});
+    })
     
 });
 

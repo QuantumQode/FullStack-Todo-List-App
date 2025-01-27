@@ -27,14 +27,18 @@ function App() {
       username: usernameReg,
       password: passwordReg
     }).then((response) => {
-      // This line logs the response from the server to the console.
-      console.log(response.data);
-      setRegisterStatus(response.data);
-      // This line clears the username and password fields in the form after the user is successfully registered.
+      console.log(response);
+      setRegisterStatus('User registered successfully');
       setUsernameReg('');
       setPasswordReg('');
+    }).catch((error) => {
+      if (error.response) {
+        setRegisterStatus(error.response.data);
+      } else {
+        setRegisterStatus('An error occurred');
+      }
     });
-  }
+  };
 
   // Login function sends POST request to server to log user in.
   const login = () => {
