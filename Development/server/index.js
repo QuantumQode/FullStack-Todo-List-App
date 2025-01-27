@@ -1,7 +1,9 @@
 //This file sets up an Express server that connects to a MySQL database and handles user registration requests.
 
-// These const variables import the express, mysql, and cors libraries.
-// The express library is used to create the server.
+// These const variables import the dependencies.
+
+
+// The express library is used to create the server and handle requests.
 const express = require('express');
 // The mysql library is used to connect to the MySQL database.
 const mysql = require('mysql');
@@ -9,6 +11,11 @@ const mysql = require('mysql');
 const app = express();
 // The cors variable imports the cors library, which allows the server to accept requests from the client.
 const cors = require('cors');
+
+// The bcrypt library is used to hash passwords before storing them in the database.
+const bcrypt = require('bcrypt');
+const saltRounds = 10;
+
 
 // The app.use() function tells the server to use the express.json() and cors() middleware.
 app.use(express.json()); 
@@ -54,19 +61,30 @@ app.post('/register', (req, res) => {
     const username = req.body.username;
     const password = req.body.password;
 
-    //insert user into database
-    db.query(
-        'INSERT INTO users (userName, userPassword) VALUES (?, ?)',
-        [username, password],
-        (err, result) => {
-            if (err) {
-                console.error('Error inserting user:', err);
-                res.status(500).send('Error inserting user');
-            } else {
-                res.status(200).send('User registered successfully');
-            }
+    bcrypt.hash(password, saltRounds, (err, hash) => {
+        if (err) {
+            // Log the error to the console and send a 500 status code to the client.
+            console.error('Error hashing password:', err);
+            res.status(500).send('Error registering user');
+            return;
         }
-    );
+
+        //insert userName and hashed userPassword into database
+        db.query(
+            'INSERT INTO users (userName, userPassword) VALUES (?, ?)',
+            [username, hash],
+            (err, result) => {
+                if (err) {
+                    console.error('Error inserting user:', err);
+                    res.status(500).send('Error inserting user');
+                } else {
+                    res.status(200).send('User registered successfully');
+                }
+            }
+        );
+    });
+    
+    
 });
 
 //create a post endpoint for user login
@@ -76,17 +94,23 @@ app.post('/login', (req, res) => {
 
     //check if user exists
     db.query(
-        'SELECT * FROM users WHERE userName = ? AND userPassword = ?',
-        [username, password],
+        'SELECT * FROM users WHERE userName = ?;',
+        [username],
         (err, result) => {
             if (err) {
                 console.error('Error checking user:', err);
                 res.status(500).send('Server error occured');
             } else {
                 if (result.length > 0) {
-                    res.status(200).send(username +  ' logged in successfully');
+                    bcrypt.compare(password, result[0].userPassword, (error, response) => {
+                        if (response) {
+                            res.status(200).send(username + 'Logged in successfully');
+                        } else {
+                            res.status(400).send('Incorrect username or password');
+                        }
+                    });
                 } else {
-                    res.status(400).send('Incorrect username or password');
+                    res.status(400).send('User does not exist');
                 }
             }
         }
