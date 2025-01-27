@@ -14,7 +14,6 @@ const cors = require('cors');
 
 // The bcrypt library is used to hash passwords before storing them in the database.
 const bcrypt = require('bcrypt');
-const e = require('express');
 const saltRounds = 10;
 
 
@@ -97,7 +96,7 @@ app.post('/register', (req, res) => {
             }
         );
 });
-    })
+})
     
 });
 
