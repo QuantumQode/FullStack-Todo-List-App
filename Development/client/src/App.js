@@ -2,7 +2,7 @@
 // The import statement at the top imports the useState and Axios hooks from the react and axios libraries.
 import React, { useState } from 'react';
 // Axios is a library that allows you to make HTTP requests from the browser.
-import Axios from 'axios';
+import Axios, { all } from 'axios';
 // App.css is a CSS file that contains styles for the app.
 import './App.css';
 
@@ -19,6 +19,32 @@ function App() {
   const [passwordLogin, setPasswordLogin] = useState('')
   // This line creates a state variable loginStatus and a function setLoginStatus to update it.
   const [loginStatus, setLoginStatus] = useState('')
+
+
+  // This function checks the username meets requirements by creating an array of errors.
+  const validateUsername = (username) => {
+    const errors = [];
+    const minLength = 3;
+    const maxLength = 10;
+    const validCharacters = /^[a-zA-Z0-9_]+$/;
+
+    if (!username || username.trim() === '') {
+      errors.push('Username is required');
+    }
+    if (username.length < minLength) {
+      errors.push('Username must be at least 3 characters long');
+    }
+    if (username.length > maxLength) {
+      errors.push('Username must be at most 10 characters long');
+    }
+    if (!validCharacters.test(username)) {
+      errors.push('Username must contain only letters and numbers and underscores');
+    }
+    if (username.includes(' ')) {
+      errors.push('Username cannot contain consecutive underscores');
+    }
+    return errors;
+  }
 
 
   // This function checks password meets requirements by creating an array of errors.
@@ -44,6 +70,7 @@ function App() {
     return errors;
   };
 
+  // This function formats the errors into a list of JSX elements.
   const formatErrors = (errors) => {
     return errors.map((error, index) => (
       <span key={index}>
@@ -56,10 +83,12 @@ function App() {
 
   // Register function sends POST request to server to register user.
   const register = () => {
-    const validationMessage = validatePassword(passwordReg);
+    const usernameErrors = validateUsername(usernameReg);
+    const passwordErrors = validatePassword(passwordReg);
+    const allErrors = [...usernameErrors, ...passwordErrors];
 
-    if (validationMessage.length > 0) {
-      setRegisterStatus(formatErrors(validationMessage));
+    if (allErrors.length > 0) {
+      setRegisterStatus(formatErrors(allErrors));
       return;
     }
 
