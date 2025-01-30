@@ -19,10 +19,50 @@ function App() {
   const [passwordLogin, setPasswordLogin] = useState('')
   // This line creates a state variable loginStatus and a function setLoginStatus to update it.
   const [loginStatus, setLoginStatus] = useState('')
+
+
+  // This function checks password meets requirements by creating an array of errors.
+  const validatePassword = (password) => {
+    const errors = [];
+    const minLength = 5;
+    const hasUpperCase = /[A-Z]/.test(password);
+    const hasNumber = /[0-9]/.test(password);
+    const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(password);
+
+    if (password.length < minLength) {
+      errors.push('Password must be at least 5 characters long');
+    }
+    if (!hasUpperCase) {
+      errors.push('Password must contain at least one uppercase letter');
+    }
+    if (!hasNumber) {
+      errors.push('Password must contain at least one number');
+    }
+    if (!hasSpecialChar) {
+      errors.push('Password must contain at least one special character');
+    }
+    return errors;
+  };
+
+  const formatErrors = (errors) => {
+    return errors.map((error, index) => (
+      <span key={index}>
+        {error}
+        <br />
+        </span>
+    ));
+  };
   
 
   // Register function sends POST request to server to register user.
   const register = () => {
+    const validationMessage = validatePassword(passwordReg);
+
+    if (validationMessage.length > 0) {
+      setRegisterStatus(formatErrors(validationMessage));
+      return;
+    }
+
     Axios.post('http://localhost:3001/register', {
       username: usernameReg,
       password: passwordReg
