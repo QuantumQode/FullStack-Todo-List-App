@@ -79,6 +79,20 @@ function App() {
         </span>
     ));
   };
+
+   // Reset function for the registration form
+   const resetRegisterForm = () => {
+    setUsernameReg('');
+    setPasswordReg('');
+    setRegisterStatus('');
+  };
+
+  // Reset function for the login form
+  const resetLoginForm = () => {
+    setUsernameLogin('');
+    setPasswordLogin('');
+    setLoginStatus('');
+  };
   
 
   // Register function sends POST request to server to register user.
@@ -148,6 +162,7 @@ function App() {
         {/* This button calls the register function when clicked. */}
         <button className='btn' onClick={register}>Register</button>
         {registerStatus && <div className='errorMessage'>{registerStatus}</div>}
+        <button className="btn2" onClick={resetRegisterForm}>Reset</button>
       </div>
         
 
@@ -170,6 +185,7 @@ function App() {
         {/* This button logs the user in when clicked. */}
         <button className='btn' onClick={login}>Login</button>
         {loginStatus && <div className='errorMessage'>{loginStatus}</div>}
+        <button className="btn2" onClick={resetLoginForm}>Reset</button>
       </div>
     </div>
 
