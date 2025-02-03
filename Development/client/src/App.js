@@ -48,7 +48,7 @@ function App() {
       errors.push('Username must contain only letters, numbers and underscores');
     }
     if (username.includes(' ')) {
-      errors.push('Username cannot contain consecutive underscores');
+      errors.push('Username cannot contain spaces');
     }
     return errors;
   }
