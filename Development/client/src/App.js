@@ -8,17 +8,24 @@ import './App.css';
 
 function App() {
 
+  // Registration state variables
   // These 2 lines create state variables usernameReg and passwordReg, and functions setUsernameReg and setPasswordReg to update them.
   const [usernameReg, setUsernameReg] = useState('')
   const [passwordReg, setPasswordReg] = useState('')
-  // This line creates a state variable registerStatus and a function setRegisterStatus to update it.
-  const [registerStatus, setRegisterStatus] = useState('')
+  // This line creates a state variable registerMessage and a function setRegisterMessage to update it.
+  const [registerMessage, setRegisterMessage] = useState({ type: '', message: '' });
+  // This line creates a state variable registerSubmit and a function setRegisterSubmit to update it.
+  const [registerSubmitted, setRegisterSubmitted] = useState(false);
 
+
+  // Login state variables
   // These 2 lines create state variables usernameLogin and passwordLogin, and functions setUsernameLogin and setPasswordLogin to update them.
   const [usernameLogin, setUsernameLogin] = useState('')
   const [passwordLogin, setPasswordLogin] = useState('')
-  // This line creates a state variable loginStatus and a function setLoginStatus to update it.
-  const [loginStatus, setLoginStatus] = useState('')
+  // This line creates a state variable loginMessage and a function setLoginMessage to update it.
+  const [loginMessage, setLoginMessage] = useState({ type: '', message: '' });
+  // This line creates a state variable loginSubmit and a function setLoginSubmit to update it.
+  const [loginSubmitted, setLoginSubmitted] = useState(false);
 
 
   // This function checks the username meets requirements by creating an array of errors.
@@ -84,25 +91,26 @@ function App() {
    const resetRegisterForm = () => {
     setUsernameReg('');
     setPasswordReg('');
-    setRegisterStatus('');
+    setRegisterMessage('');
   };
 
   // Reset function for the login form
   const resetLoginForm = () => {
     setUsernameLogin('');
     setPasswordLogin('');
-    setLoginStatus('');
+    setLoginMessage('');
   };
   
 
   // Register function sends POST request to server to register user.
   const register = () => {
+    setRegisterSubmitted(true);
     const usernameErrors = validateUsername(usernameReg);
     const passwordErrors = validatePassword(passwordReg);
     const allErrors = [...usernameErrors, ...passwordErrors];
 
     if (allErrors.length > 0) {
-      setRegisterStatus(formatErrors(allErrors));
+      setRegisterMessage({ type: 'error', message: formatErrors(allErrors) });
       return;
     }
 
@@ -111,32 +119,33 @@ function App() {
       password: passwordReg
     }).then((response) => {
       console.log(response);
-      setRegisterStatus('User registered successfully');
+      setRegisterMessage({ type: 'success', message: 'User registered successfully' });
       setUsernameReg('');
       setPasswordReg('');
     }).catch((error) => {
       if (error.response) {
-        setRegisterStatus(error.response.data);
+        setRegisterMessage({ type: 'error', message: error.response.data });
       } else {
-        setRegisterStatus('An error occurred');
+        setRegisterMessage({ type: 'error', message: 'An error occurred' });
       }
     });
   };
 
   // Login function sends POST request to server to log user in.
   const login = () => {
+    setLoginSubmitted(true);
     Axios.post('http://localhost:3001/login', {
       username: usernameLogin,
       password: passwordLogin
     }).then((response) => {
       // This line logs the response from the server to the console which is plain script.
-      setLoginStatus(response.data);
+      setLoginMessage({ type: 'success', message: response.data });
     }).catch((error) => {
       // Handling error
       if (error.response) {
-        setLoginStatus(error.response.data);
+        setLoginMessage({ type: 'error', message: error.response.data });
       } else {
-        setLoginStatus('An error occurred');
+        setLoginMessage({ type: 'error', message: 'An error occurred' });
       }
   });
 };
@@ -161,10 +170,14 @@ function App() {
         
         {/* This button calls the register function when clicked. */}
         <button className='btn' onClick={register}>Register</button>
-        {registerStatus && <div className='errorMessage'>{registerStatus}</div>}
-        <button className="btn2" onClick={resetRegisterForm}>Reset</button>
+        <button className="btn" onClick={resetRegisterForm}>Reset</button>
+        {registerSubmitted && registerMessage && (
+          <div className={registerMessage.type === 'error' ? 'errorMessage' : 'successMessage'}>
+            {registerMessage.message}
+          </div>
+        )}
       </div>
-        
+
 
       {/* This div contains the login form. */}
       <div className="FormContainer"> 
@@ -184,8 +197,13 @@ function App() {
 
         {/* This button logs the user in when clicked. */}
         <button className='btn' onClick={login}>Login</button>
-        {loginStatus && <div className='errorMessage'>{loginStatus}</div>}
-        <button className="btn2" onClick={resetLoginForm}>Reset</button>
+        {/* This button resets the login form when clicked. */}
+        <button className="btn" onClick={resetLoginForm}>Reset</button>
+        {loginSubmitted && loginMessage && (
+          <div className={loginMessage.type === 'error' ? 'errorMessage' : 'successMessage'}>
+            {loginMessage.message}
+          </div>
+        )}
       </div>
     </div>
 

@@ -84,21 +84,8 @@ input:focus {
     display: inline-block;
     text-align: center;
     line-height: 40px; /* Vertically center text */
-    margin-right: 60px;
-
-}
-.btn2 {
-  width: 150px; /* Fixed width */
-  height: 40px; /* Fixed height */
-  background-color: #007bff;
-  color: #ffffff;
-  border: none;
-  border-radius: 4px;
-  cursor: pointer;
-  font-size: 16px;
-  display: inline-block;
-  text-align: center;
-  line-height: 40px; /* Vertically center text */
+    margin-right: 25px;
+    margin-left: 22px;
 
 }
 
