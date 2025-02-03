@@ -25,7 +25,7 @@ function App() {
   const validateUsername = (username) => {
     const errors = [];
     const minLength = 3;
-    const maxLength = 10;
+    const maxLength = 20;
     const validCharacters = /^[a-zA-Z0-9_]+$/;
 
     if (!username || username.trim() === '') {
@@ -38,7 +38,7 @@ function App() {
       errors.push('Username must be at most 10 characters long');
     }
     if (!validCharacters.test(username)) {
-      errors.push('Username must contain only letters and numbers and underscores');
+      errors.push('Username must contain only letters, numbers and underscores');
     }
     if (username.includes(' ')) {
       errors.push('Username cannot contain consecutive underscores');
@@ -50,13 +50,13 @@ function App() {
   // This function checks password meets requirements by creating an array of errors.
   const validatePassword = (password) => {
     const errors = [];
-    const minLength = 5;
+    const minLength = 8;
     const hasUpperCase = /[A-Z]/.test(password);
     const hasNumber = /[0-9]/.test(password);
     const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(password);
 
     if (password.length < minLength) {
-      errors.push('Password must be at least 5 characters long');
+      errors.push('Password must be at least 8 characters long');
     }
     if (!hasUpperCase) {
       errors.push('Password must contain at least one uppercase letter');
@@ -130,9 +130,8 @@ function App() {
   return (
     <div className="App">
       {/* This div contains the registration form. */}
-      <div className="Registration">
-        <h1>Registration</h1>
-
+      <div className="FormContainer">
+        <h1>Register</h1>
         {/* This input field allows the user to enter their username. */}
         <label>Username</label>
         <input type="text" 
@@ -148,10 +147,12 @@ function App() {
         
         {/* This button calls the register function when clicked. */}
         <button className='btn' onClick={register}>Register</button>
-        </div>
+        {registerStatus && <div className='errorMessage'>{registerStatus}</div>}
+      </div>
+        
 
       {/* This div contains the login form. */}
-      <div className="Login">
+      <div className="FormContainer"> 
         <h1>Login</h1>
         {/* This input field allows the user to enter their username. */}
         <label>Username</label>
@@ -168,18 +169,10 @@ function App() {
 
         {/* This button logs the user in when clicked. */}
         <button className='btn' onClick={login}>Login</button>
-        
+        {loginStatus && <div className='errorMessage'>{loginStatus}</div>}
       </div>
-
-      {/* This div displays the registration status message. */}
-      <h1>{registerStatus}</h1>
-
-      {/* This div displays the login status message. */}
-      <h1>{loginStatus}</h1>
-      
-
-      
     </div>
+
   );
 }
 
