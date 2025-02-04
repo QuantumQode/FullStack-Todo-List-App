@@ -1,10 +1,11 @@
 // This file is the main file of the react app. It contains the form for user registration.
 // The import statement at the top imports the useState and Axios hooks from the react and axios libraries.
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 // Axios is a library that allows you to make HTTP requests from the browser.
 import Axios, { all } from 'axios';
 // App.css is a CSS file that contains styles for the app.
 import './App.css';
+import axios from 'axios';
 
 function App() {
 
@@ -26,6 +27,28 @@ function App() {
   const [loginMessage, setLoginMessage] = useState({ type: '', message: '' });
   // This line creates a state variable loginSubmit and a function setLoginSubmit to update it.
   const [loginSubmitted, setLoginSubmitted] = useState(false);
+
+
+  const [loginStatus, setLoginStatus] = useState({ type: '', message: '' });
+  // 
+  axios.defaults.withCredentials = true;
+
+  useEffect(() => {
+    Axios.get('http://localhost:3001/login')
+      .then((response) => {
+        console.log('Login response:', response.data); // Debug log
+        if (response.data.loggedIn === true) {
+          const user = response.data.username;
+          setLoginStatus({ 
+            type: 'success', 
+            message: `Welcome, ${user.userName}!` 
+          });
+        }
+      })
+      .catch((error) => {
+        console.error('Login check failed:', error);
+      });
+  }, []);
 
 
   // This function checks the username meets requirements by creating an array of errors.
@@ -152,6 +175,7 @@ function App() {
   // This block of code contains the JSX for the registration form.
   return (
     <div className="App">
+      <div className='username' >{loginStatus.message}</div>
       {/* This div contains the registration form. */}
       <div className="FormContainer">
         <h1>Register</h1>
@@ -177,7 +201,6 @@ function App() {
           </div>
         )}
       </div>
-
 
       {/* This div contains the login form. */}
       <div className="FormContainer"> 
@@ -206,7 +229,6 @@ function App() {
         )}
       </div>
     </div>
-
   );
 }
 

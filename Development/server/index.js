@@ -29,7 +29,7 @@ const session = require('express-session');
 // The app.use() function tells the server to use the express.json() and cors() middleware.
 app.use(express.json()); 
 app.use(cors({
-    origin: ['http://localhost:3000'],
+    origin: 'http://localhost:3000',
     methods: ['GET', 'POST'],
     credentials: true
 }));
@@ -102,7 +102,8 @@ app.post('/register', (req, res) => {
             return res.status(400).send('User already exists');
         }
 
-        //hash the password
+        // If username does NOT EXIST, we can proceed to hash the password and insert the user into the database
+        // Hash the password
         bcrypt.hash(password, saltRounds, (err, hash) => {
         if (err) {
             // Log the error to the console and send a 500 status code to the client.
@@ -129,6 +130,18 @@ app.post('/register', (req, res) => {
     
 });
 
+app.get('/login', (req, res) => {
+    if (req.session.user) {
+        const { userPassword, ...userWithoutPassword } = req.session.user;
+        res.json({
+            loggedIn: true,
+            username: userWithoutPassword});
+    } else {
+        res.json({ loggedIn: false });
+    }
+});
+
+
 //create a post endpoint for user login
 app.post('/login', (req, res) => {
     const username = req.body.username;
@@ -146,6 +159,7 @@ app.post('/login', (req, res) => {
                 if (result.length > 0) {
                     bcrypt.compare(password, result[0].userPassword, (error, response) => {
                         if (response) {
+                            req.session.user = result[0];
                             res.status(200).send(username + 'Logged in successfully');
                         } else {
                             res.status(400).send('Incorrect username or password');
