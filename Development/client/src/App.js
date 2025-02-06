@@ -2,7 +2,7 @@
 // The import statement at the top imports the useState and Axios hooks from the react and axios libraries.
 import React, { useEffect, useState } from 'react';
 // Axios is a library that allows you to make HTTP requests from the browser.
-import Axios, { all } from 'axios';
+import Axios from 'axios';
 // App.css is a CSS file that contains styles for the app.
 import './App.css';
 import axios from 'axios';
@@ -28,11 +28,12 @@ function App() {
   // This line creates a state variable loginSubmit and a function setLoginSubmit to update it.
   const [loginSubmitted, setLoginSubmitted] = useState(false);
 
-
+  
   const [loginStatus, setLoginStatus] = useState({ type: '', message: '' });
-  // 
+  // This line sets the default base URL for Axios requests.
   axios.defaults.withCredentials = true;
 
+  // This block of code sends a GET request to the server to check if the user is already logged in.
   useEffect(() => {
     Axios.get('http://localhost:3001/login')
       .then((response) => {
@@ -163,6 +164,7 @@ function App() {
     }).then((response) => {
       // This line logs the response from the server to the console which is plain script.
       setLoginMessage({ type: 'success', message: response.data });
+      setLoginStatus({ type: 'success', message: response.data });
     }).catch((error) => {
       // Handling error
       if (error.response) {

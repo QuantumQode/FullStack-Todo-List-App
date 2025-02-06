@@ -130,6 +130,7 @@ app.post('/register', (req, res) => {
     
 });
 
+// create a get endpoint for user login
 app.get('/login', (req, res) => {
     if (req.session.user) {
         const { userPassword, ...userWithoutPassword } = req.session.user;
