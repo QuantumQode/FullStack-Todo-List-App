@@ -37,15 +37,13 @@ body {
     transition: transform 0.3s ease;
   }
 
-
-
-  h1 {
+h1 {
     color: var(--text-color);
     margin-bottom: 20px;
     font-family: 'Roboto', sans-serif;
-    font-size: 24px;
+    font-size: 35px;
     text-align: center;
-  }
+}
 
 label {
     display: block;
@@ -123,11 +121,17 @@ button:hover {
   z-index: 1000;   /* Ensures it stays on top of other elements */
 }
 
-h1 {
-    font-size: 35px;
-}
-  
 input {
     padding: 8px;
     font-size: 12px;
+}
+
+.switchForm {
+    color: var(--text-color);
+    font-size: 14px;
+    text-align: center;
+    margin-top: 20px;
+    display: flex;
+    justify-content: left;
+    margin-bottom: 0px;
 }

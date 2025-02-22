@@ -124,6 +124,8 @@ function Register() {
       />
       <button className='btn' onClick={register}>Register</button>
       <button className="btn" onClick={resetRegisterForm}>Reset</button>
+
+      
       {registerSubmitted && registerMessage && (
         <div className={registerMessage.type === 'error' ? 'errorMessage' : 'successMessage'}>
           {registerMessage.message}

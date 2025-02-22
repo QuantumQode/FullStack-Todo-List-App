@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import axios from 'axios';
-import { useNavigate } from 'react-router-dom';
+import { useNavigate, Link } from 'react-router-dom';
 
 function Login() {
   const [usernameLogin, setUsernameLogin] = useState('');
@@ -20,7 +20,10 @@ function Login() {
     axios.post('http://localhost:3001/login', {
       username: usernameLogin,
       password: passwordLogin
-    }).then((response) => {
+    },
+    { withCredentials: true }
+  )
+  .then((response) => {
       setLoginMessage({ type: 'success', message: response.data });
       navigate('/dashboard'); // Redirect to dashboard after successful login
     }).catch((error) => {
@@ -35,6 +38,7 @@ function Login() {
   return (
     <div className="FormContainer">
       <h1>Login</h1>
+      
       <label>Username</label>
       <input 
         type="text"
@@ -51,11 +55,17 @@ function Login() {
       />
       <button className='btn' onClick={login}>Login</button>
       <button className="btn" onClick={resetLoginForm}>Reset</button>
+
       {loginSubmitted && loginMessage && (
         <div className={loginMessage.type === 'error' ? 'errorMessage' : 'successMessage'}>
           {loginMessage.message}
         </div>
       )}
+
+      <p className="switchForm">
+        Don't have an account? <Link to="/register">Register</Link>
+      </p>
+
     </div>
   );
 }
