@@ -2,10 +2,10 @@
 
 // These const variables import the dependencies.
 
-
+require('dotenv').config();
 // The express library is used to create the server and handle requests.
 const express = require('express');
-require('dotenv').config();
+
 // DB connection
 require('./src/config/db');
 
@@ -50,9 +50,7 @@ app.use(session({
 }));
 
 const authRoutes = require('./src/routes/auth');
-
-
-app.use("/auth",authRoutes);
+app.use("/auth", authRoutes);
 
 app.listen(3001, () => {
   console.log('Server is running on port 3001');

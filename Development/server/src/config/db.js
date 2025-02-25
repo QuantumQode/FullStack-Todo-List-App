@@ -1,6 +1,6 @@
 // The mysql library is used to connect to the MySQL database.
 const mysql = require('mysql');
-
+require('dotenv').config();
 
 //create connection to database
 const db = mysql.createConnection({
@@ -35,3 +35,5 @@ db.connect((err) => {
         console.log('Users table created or already exists');
     });
 });
+
+module.exports = db;

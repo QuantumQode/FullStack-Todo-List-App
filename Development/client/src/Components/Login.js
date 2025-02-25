@@ -17,7 +17,7 @@ function Login() {
 
   const login = () => {
     setLoginSubmitted(true);
-    axios.post('http://localhost:3001/login', {
+    axios.post('http://localhost:3001/auth/login', {
       username: usernameLogin,
       password: passwordLogin
     },
