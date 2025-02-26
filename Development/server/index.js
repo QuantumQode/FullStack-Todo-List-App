@@ -41,7 +41,7 @@ app.use(bodyParser.urlencoded({ extended: true }));
 // The app.use() function tells the server to use the session middleware with the specified options.
 app.use(session({
     key: 'userId',
-    secret: 'QuantumQoder1!',
+    secret: process.env.SESSION_SECRET,
     resave: false,
     saveUninitialized: false,
     cookie: {

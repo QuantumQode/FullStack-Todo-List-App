@@ -86,7 +86,7 @@ function Register() {
       return;
     }
 
-    axios.post('http://localhost:3001/register', {
+    axios.post('http://localhost:3001/auth/register', {
       username: usernameReg,
       password: passwordReg
     })
