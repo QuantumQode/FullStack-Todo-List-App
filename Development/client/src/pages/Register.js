@@ -72,6 +72,7 @@ function Register() {
     setUsernameReg('');
     setPasswordReg('');
     setRegisterMessage({ type: '', message: '' });
+    setRegisterSubmitted(false);
   };
 
   // Register function
