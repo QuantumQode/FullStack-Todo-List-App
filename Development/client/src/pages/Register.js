@@ -23,7 +23,7 @@ function Register() {
       errors.push('Username must be at least 3 characters long');
     }
     if (username.length > maxLength) {
-      errors.push('Username must be at most 10 characters long');
+      errors.push('Username must be at most 20 characters long');
     }
     if (!validCharacters.test(username)) {
       errors.push('Username must contain only letters, numbers and underscores');
@@ -76,7 +76,7 @@ function Register() {
   };
 
   // Register function
-  const register = () => {
+  const register = async () => {
     setRegisterSubmitted(true);
     const usernameErrors = validateUsername(usernameReg);
     const passwordErrors = validatePassword(passwordReg);
@@ -87,23 +87,23 @@ function Register() {
       return;
     }
 
-    axios.post('http://localhost:3001/auth/register', {
-      username: usernameReg,
-      password: passwordReg
-    })
-    .then((response) => {
+    try {
+      const response = await axios.post('http://localhost:3001/auth/register', {
+        username: usernameReg,
+        password: passwordReg
+      });
+      
       setRegisterMessage({ type: 'success', message: 'User registered successfully' });
       setTimeout(() => {
         navigate('/login');
       }, 2000);
-    })
-    .catch((error) => {
+    } catch (error) {
       if (error.response) {
         setRegisterMessage({ type: 'error', message: error.response.data });
       } else {
         setRegisterMessage({ type: 'error', message: 'An error occurred' });
       }
-    });
+    }
   };
 
   return (
