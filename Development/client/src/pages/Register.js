@@ -20,10 +20,10 @@ function Register() {
       errors.push('Username is required');
     }
     if (username.length < minLength) {
-      errors.push('Username must be at least 3 characters long');
+      errors.push(`Username must be at least ${minLength} characters long`);
     }
     if (username.length > maxLength) {
-      errors.push('Username must be at most 20 characters long');
+      errors.push(`Username must be at most ${maxLength} characters long`);
     }
     if (!validCharacters.test(username)) {
       errors.push('Username must contain only letters, numbers and underscores');
@@ -40,10 +40,15 @@ function Register() {
     const minLength = 8;
     const hasUpperCase = /[A-Z]/.test(password);
     const hasNumber = /[0-9]/.test(password);
-    const hasSpecialChar = /[!@#$%^&*()_+\-=\[\]{};':"\\|,.<>\/?]+/.test(password);
+    const hasSpecialChar = /[!@#$%^&*()_+\-=[\]{};':"\\|,.<>/?]+/.test(password);
 
+    if (!password) {
+      errors.push('Password is required');
+      return errors;
+    }
+    
     if (password.length < minLength) {
-      errors.push('Password must be at least 8 characters long');
+      errors.push(`Password must be at least ${minLength} characters long`);
     }
     if (!hasUpperCase) {
       errors.push('Password must contain at least one uppercase letter');
@@ -76,8 +81,10 @@ function Register() {
   };
 
   // Register function
-  const register = async () => {
+  const register = async (event) => {
+    event.preventDefault();
     setRegisterSubmitted(true);
+    
     const usernameErrors = validateUsername(usernameReg);
     const passwordErrors = validatePassword(passwordReg);
     const allErrors = [...usernameErrors, ...passwordErrors];
@@ -91,9 +98,11 @@ function Register() {
       const response = await axios.post('http://localhost:3001/auth/register', {
         username: usernameReg,
         password: passwordReg
-      });
+      }, { withCredentials: true });
       
-      setRegisterMessage({ type: 'success', message: 'User registered successfully' });
+      setRegisterMessage({ type: 'success', message: 'Registration successful! Redirecting to login...' });
+      
+      // Navigate after a short delay to allow user to see success message
       setTimeout(() => {
         navigate('/login');
       }, 2000);
@@ -101,41 +110,46 @@ function Register() {
       if (error.response) {
         setRegisterMessage({ type: 'error', message: error.response.data });
       } else {
-        setRegisterMessage({ type: 'error', message: 'An error occurred' });
+        setRegisterMessage({ type: 'error', message: 'Connection error. Please try again.' });
       }
     }
   };
 
   return (
-    <div className="FormContainer">
+    <form className="FormContainer" onSubmit={register}>
       <h1>Register</h1>
+      
       <label>Username</label>
       <input 
         type="text"
         placeholder="Enter Username"
         value={usernameReg}
         onChange={(e) => setUsernameReg(e.target.value)}
+        required
       />
+      
       <label>Password</label>
       <input 
         type="password"
         placeholder="Enter Password"
         value={passwordReg}
         onChange={(e) => setPasswordReg(e.target.value)}
+        required
       />
-      <button className='btn' onClick={register}>Register</button>
-      <button className="btn" onClick={resetRegisterForm}>Reset</button>
-
       
-      {registerSubmitted && registerMessage && (
+      <button className="btn" type="submit">Register</button>
+      <button className="btn" type="button" onClick={resetRegisterForm}>Reset</button>
+
+      {registerSubmitted && registerMessage.message && (
         <div className={registerMessage.type === 'error' ? 'errorMessage' : 'successMessage'}>
           {registerMessage.message}
         </div>
       )}
+      
       <p className="switchForm">
         Already have an account? <Link to="/login">Login here</Link>
       </p>
-    </div>
+    </form>
   );
 }
 

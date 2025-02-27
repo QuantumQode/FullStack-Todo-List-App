@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState } from 'react';
 import axios from 'axios';
 import { useNavigate, Link } from 'react-router-dom';
 
@@ -12,27 +12,48 @@ function Login() {
   const resetLoginForm = () => {
     setUsernameLogin('');
     setPasswordLogin('');
-    setLoginMessage('');
+    setLoginMessage({ type: '', message: '' });
+    setLoginSubmitted(false);
   };
 
   const login = async (event) => {
     event.preventDefault();
     setLoginSubmitted(true);
     
+    // Validate input
+    if (!usernameLogin || !passwordLogin) {
+      setLoginMessage({ type: 'error', message: 'Username and password are required' });
+      return;
+    }
+    
     try {
-      const response = await axios.post(`${process.env.BACKEND_URL}/login`, {
+      const response = await axios.post('http://localhost:3001/auth/login', {
         username: usernameLogin,
         password: passwordLogin
-      }, 
-      { withCredentials: true });
+      }, { withCredentials: true });
 
-      setLoginMessage({ type: 'success', message: response.data });
-      navigate('/dashboard'); // Redirect to dashboard after successful login
+      // Store the token in localStorage for non-cookie use cases
+      if (response.data.token) {
+        localStorage.setItem('token', response.data.token);
+      }
+      
+      // Store user info in localStorage
+      if (response.data.user) {
+        localStorage.setItem('user', JSON.stringify(response.data.user));
+      }
+      
+      setLoginMessage({ 
+        type: 'success', 
+        message: response.data.message || 'Login successful'
+      });
+      
+      // Navigate immediately - route protection will handle redirects
+      navigate('/dashboard');
     } catch (error) {
       if (error.response) {
         setLoginMessage({ type: 'error', message: error.response.data });
       } else {
-        setLoginMessage({ type: 'error', message: 'An error occurred' });
+        setLoginMessage({ type: 'error', message: 'Connection error. Please try again.' });
       }
     }
   };
@@ -49,6 +70,7 @@ function Login() {
         onChange={(e) => setUsernameLogin(e.target.value)}
         required
       />
+      
       <label>Password</label>
       <input 
         type="password"
@@ -57,19 +79,19 @@ function Login() {
         onChange={(e) => setPasswordLogin(e.target.value)}
         required
       />
-      <button className='btn'>Login</button>
+      
+      <button className="btn" type="submit">Login</button>
       <button className="btn" type="button" onClick={resetLoginForm}>Reset</button>
 
-        {loginSubmitted && loginMessage && (
-          <div className={loginMessage.type === 'error' ? 'errorMessage' : 'successMessage'}>
-            {loginMessage.message}
-          </div>
-        )}
+      {loginSubmitted && loginMessage.message && (
+        <div className={loginMessage.type === 'error' ? 'errorMessage' : 'successMessage'}>
+          {loginMessage.message}
+        </div>
+      )}
 
       <p className="switchForm">
         Don't have an account? <Link to="/register">Register</Link>
       </p>
-
     </form>
   );
 }

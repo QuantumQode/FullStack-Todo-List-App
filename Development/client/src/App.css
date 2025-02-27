@@ -1,68 +1,75 @@
 :root {
-    --primary-color: #1e90ff;
-    --secondary-color: #2c3e50;
-    --success-color: #27ae60;
-    --error-color: #e74c3c;
-    --text-color: #ecf0f1;
-    --background-color: #34495e;
-    --input-background: #2c3e50;
-    --input-border: #1abc9c;
+  --primary-color: #1e90ff;
+  --secondary-color: #2c3e50;
+  --success-color: #27ae60;
+  --error-color: #e74c3c;
+  --text-color: #ecf0f1;
+  --background-color: #34495e;
+  --input-background: #2c3e50;
+  --input-border: #1abc9c;
 }
 
 body {
-    background: var(--background-color);
-    font-family: 'Roboto', sans-serif;
-    margin: 0;
-    min-height: 100vh;
-    color: var(--text-color);
-  }
+  background: var(--background-color);
+  font-family: 'Roboto', sans-serif;
+  margin: 0;
+  min-height: 100vh;
+  color: var(--text-color);
+}
 
 .App {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    flex-direction: row;
-    min-height: 100vh;
-    padding: 20px;
-    gap: 20px;
-  }
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 100vh;
+  padding: 20px;
+}
 
 .FormContainer {
-    background-color: var(--secondary-color);
-    padding: 30px;
-    border-radius: 15px;
-    box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
-    width: 100%;
-    max-width: 400px;
-    transition: transform 0.3s ease;
-  }
+  background-color: var(--secondary-color);
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 400px;
+}
+
+.taskContainer {
+  background-color: var(--secondary-color);
+  padding: 30px;
+  border-radius: 15px;
+  box-shadow: 0 10px 20px rgba(0, 0, 0, 0.3);
+  width: 100%;
+  max-width: 800px;
+  margin: 2rem auto;
+  min-height: 400px;
+  position: relative;
+}
 
 h1 {
-    color: var(--text-color);
-    margin-bottom: 20px;
-    font-family: 'Roboto', sans-serif;
-    font-size: 35px;
-    text-align: center;
+  color: var(--text-color);
+  margin-bottom: 20px;
+  font-size: 32px;
+  text-align: center;
 }
 
 label {
-    display: block;
-    margin-bottom: 8px;
-    color: var(--text-color);
-    font-weight: bold;
+  display: block;
+  margin-bottom: 8px;
+  color: var(--text-color);
+  font-weight: bold;
 }
 
 input {
   width: 100%;
-  padding: 10px;
-  margin-bottom: 15px;
+  padding: 12px;
+  margin-bottom: 20px;
   border: 2px solid var(--input-border);
   border-radius: 8px;
-  font-size: 14px;
+  font-size: 16px;
   background-color: var(--input-background);
   color: var(--text-color);
   box-sizing: border-box;
-  transition: border-color 0.3s ease;
 }
 
 input:focus {
@@ -71,30 +78,27 @@ input:focus {
 }
 
 .btn {
-    width: 150px; /* Fixed width */
-    height: 40px; /* Fixed height */
-    background-color: #007bff;
-    color: #ffffff;
-    border: none;
-    border-radius: 4px;
-    cursor: pointer;
-    font-size: 16px;
-    display: inline-block;
-    text-align: center;
-    line-height: 40px; /* Vertically center text */
-    margin-right: 25px;
-    margin-left: 22px;
-
+  background-color: var(--primary-color);
+  color: white;
+  border: none;
+  border-radius: 8px;
+  padding: 12px 20px;
+  font-size: 16px;
+  cursor: pointer;
+  margin-right: 10px;
+  transition: background-color 0.3s;
+  width: 45%;
+  font-weight: bold;
 }
 
-button:hover {
-    background-color: #0056b3;
+.btn:hover {
+  background-color: #0056b3;
 }
 
 .errorMessage {
   color: var(--error-color);
   font-size: 14px;
-  margin-top: 10px;
+  margin-top: 15px;
   padding: 10px;
   background-color: rgba(231, 76, 60, 0.1);
   border-radius: 6px;
@@ -103,35 +107,37 @@ button:hover {
 .successMessage {
   color: var(--success-color);
   font-size: 14px;
-  margin-top: 10px;
+  margin-top: 15px;
   padding: 10px;
   background-color: rgba(46, 204, 113, 0.1);
   border-radius: 6px;
 }
 
 .username {
-  position: fixed; /* Fixed positioning so it stays visible even when scrolling */
-  top: 20px;       /* Distance from the top */
-  right: 20px;     /* Distance from the right */
+  position: absolute;
+  top: 20px;
+  right: 20px;
   padding: 10px 15px;
-  background-color: var(--secondary-color);
+  background-color: rgba(44, 62, 80, 0.7);
   border-radius: 5px;
-  font-size: 14x;
-  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.2);
-  z-index: 1000;   /* Ensures it stays on top of other elements */
-}
-
-input {
-    padding: 8px;
-    font-size: 12px;
+  font-size: 14px;
+  display: flex;
+  align-items: center;
 }
 
 .switchForm {
-    color: var(--text-color);
-    font-size: 14px;
-    text-align: center;
-    margin-top: 20px;
-    display: flex;
-    justify-content: left;
-    margin-bottom: 0px;
+  color: var(--text-color);
+  font-size: 14px;
+  text-align: center;
+  margin-top: 20px;
+}
+
+.switchForm a {
+  color: var(--primary-color);
+  text-decoration: none;
+  font-weight: bold;
+}
+
+.switchForm a:hover {
+  text-decoration: underline;
 }
