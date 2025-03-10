@@ -5,7 +5,7 @@ import Register from './pages/Register';
 import Dashboard from './pages/Dashboard';
 import './App.css';
 
-// Protected route component - redirects to login if not authenticated
+// Protected route component stops unauthenticated users from accessing dashboard page
 const ProtectedRoute = ({ element }) => {
   const token = localStorage.getItem('token');
   
@@ -16,7 +16,7 @@ const ProtectedRoute = ({ element }) => {
   return element;
 };
 
-// Auth route component - redirects to dashboard if already authenticated
+// Auth route component stops authenticated users from accessing login and register pages
 const AuthRoute = ({ element }) => {
   const token = localStorage.getItem('token');
   
