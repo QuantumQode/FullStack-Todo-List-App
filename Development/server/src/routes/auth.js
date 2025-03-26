@@ -1,3 +1,7 @@
+/**
+ * Authentication routes module
+ * Implements JWT-based authentication
+ */
 const express = require('express');
 const db = require('../config/db');
 const bcrypt = require('bcrypt');

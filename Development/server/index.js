@@ -28,8 +28,8 @@ const session = require('express-session');
 // The app.use() function tells the server to use the express.json() and cors() middleware.
 app.use(express.json());
 app.use(cors({
-    origin: 'http://localhost:3000',
-    methods: ['GET', 'POST'],
+    origin: process.env.BACKEND_URL || 'http://localhost:3000',
+    methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true
 }));
 
