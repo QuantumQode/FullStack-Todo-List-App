@@ -1,15 +1,9 @@
-/**
- * Authentication routes module
- * Implements JWT-based authentication
- */
 const express = require('express');
 const db = require('../config/db');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const saltRounds = 10;
 const router = express.Router();
 
-// Salt rounds for bcrypt
-const saltRounds = 10;
 
 // Utility function to query database (Promise wrapper)
 const queryDB = (sql, params) => {
@@ -21,149 +15,65 @@ const queryDB = (sql, params) => {
     });
 };
 
-/**
- * Middleware to verify JWT token
- */
-const verifyToken = (req, res, next) => {
-    const token = req.cookies.token || req.headers['x-access-token'];
-    
-    if (!token) {
-        return res.status(401).json({ message: 'No token provided' });
-    }
-    
-    try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET);
-        req.userId = decoded.id;
-        next();
-    } catch (error) {
-        return res.status(401).json({ message: 'Invalid token' });
-    }
+// Utility function to compare passwords
+const comparePasswords = (password, hash) => {
+    return new Promise((resolve, reject) => {
+        bcrypt.compare(password, hash, (err, result) => {
+            if (err) reject(err);
+            resolve(result);
+        });
+    });
 };
 
-/**
- * Login endpoint
- * Validates user credentials and issues a JWT
- */
+// Login endpoint
 router.post('/login', async (req, res) => {
     try {
         const { username, password } = req.body;
-        
-        // Validate input
-        if (!username || !password) {
-            return res.status(400).send('Username and password are required');
-        }
         
         // Check if user exists
         const users = await queryDB('SELECT * FROM users WHERE userName = ?', [username]);
         
         if (users.length === 0) {
-            return res.status(400).send('Invalid credentials');
+            return res.status(400).send('User does not exist');
         }
 
         // Compare passwords
-        const match = await bcrypt.compare(password, users[0].userPassword);
+        const isMatch = await comparePasswords(password, users[0].userPassword);
         
-        if (match) {
-            // Create JWT payload
-            const user = {
-                id: users[0].id,
-                username: users[0].userName
-            };
-            
-            // Generate JWT token
-            const token = jwt.sign(
-                user,
-                process.env.JWT_SECRET,
-                { expiresIn: process.env.JWT_EXPIRES_IN }
-            );
-            
-            // Set token in cookie
-            res.cookie('token', token, {
-                httpOnly: true,
-                secure: process.env.NODE_ENV === 'production',
-                maxAge: 24 * 60 * 60 * 1000 // 24 hours
-            });
-            
-            // Send response
-            return res.status(200).json({
-                message: 'Login successful',
-                user,
-                token
-            });
+        if (isMatch) {
+            req.session.user = users[0];
+            res.status(200).send(`${username} Logged in successfully`);
         } else {
-            return res.status(400).send('Invalid credentials');
+            res.status(400).send('Incorrect username or password');
         }
     } catch (error) {
         console.error('Login error:', error);
-        res.status(500).send('An error occurred during login');
+        res.status(500).send('Server error occurred');
     }
 });
 
-/**
- * Registration endpoint
- * Creates a new user account
- */
+// Registration endpoint
 router.post('/register', async (req, res) => {
     try {
         const { username, password } = req.body;
-
-        // Validate input
-        if (!username || !password) {
-            return res.status(400).send('Username and password are required');
-        }
 
         // Check if user exists
         const existingUsers = await queryDB('SELECT * FROM users WHERE userName = ?', [username]);
         
         if (existingUsers.length > 0) {
-            return res.status(400).send('Username already taken');
+            return res.status(400).send('User already exists');
         }
 
         // Hash password
-        const hashedPassword = await bcrypt.hash(password, saltRounds);
+        const hash = await bcrypt.hash(password, saltRounds);
         
         // Insert new user
-        await queryDB('INSERT INTO users (userName, userPassword) VALUES (?, ?)', [username, hashedPassword]);
+        await queryDB('INSERT INTO users (userName, userPassword) VALUES (?, ?)', [username, hash]);
         
-        return res.status(201).send('Registration successful');
+        res.status(200).send('User registered successfully');
     } catch (error) {
         console.error('Registration error:', error);
-        res.status(500).send('An error occurred during registration');
-    }
-});
-
-/**
- * Logout endpoint
- * Clears the JWT cookie
- */
-router.post('/logout', (req, res) => {
-    res.clearCookie('token');
-    res.status(200).send('Logged out successfully');
-});
-
-/**
- * Session check endpoint
- * Verifies if user is authenticated using JWT
- */
-router.get('/check-session', verifyToken, async (req, res) => {
-    try {
-        // Get user data from database using the ID from the token
-        const users = await queryDB('SELECT id, userName FROM users WHERE id = ?', [req.userId]);
-        
-        if (users.length === 0) {
-            return res.status(404).json({ message: 'User not found' });
-        }
-        
-        return res.status(200).json({
-            loggedIn: true,
-            user: {
-                id: users[0].id,
-                username: users[0].userName
-            }
-        });
-    } catch (error) {
-        console.error('Session check error:', error);
-        return res.status(500).json({ message: 'Server error' });
+        res.status(500).send('Error registering user');
     }
 });
 
