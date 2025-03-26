@@ -8,7 +8,6 @@ const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const router = express.Router();
 
-
 // Utility function to query database (Promise wrapper)
 const queryDB = (sql, params) => {
     return new Promise((resolve, reject) => {
