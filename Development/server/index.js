@@ -20,7 +20,7 @@ const app = express();
 
 // Configure CORS
 app.use(cors({
-    origin: process.env.BACKEND_URL,
+    origin: process.env.BACKEND_URL || 'http://localhost:3000',
     methods: ['GET', 'POST', 'PUT', 'DELETE'],
     credentials: true
 }));

@@ -2,15 +2,14 @@
  * Authentication routes module
  * Implements JWT-based authentication
  */
-const express = require('express'); 
+const express = require('express');
 const db = require('../config/db');
 const bcrypt = require('bcrypt');
 const jwt = require('jsonwebtoken');
 const router = express.Router();
-const env = require('dotenv').config();
 
 // Salt rounds for bcrypt
-const saltRounds = process.env.SALT_ROUNDS;
+const saltRounds = 10;
 
 // Utility function to query database (Promise wrapper)
 const queryDB = (sql, params) => {
