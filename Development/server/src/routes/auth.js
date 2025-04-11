@@ -7,6 +7,7 @@ const db = require('../config/db');
 const bcrypt = require('bcrypt');
 const saltRounds = 10;
 const router = express.Router();
+const jwt = require('jsonwebtoken');
 
 // Utility function to query database (Promise wrapper)
 const queryDB = (sql, params) => {
@@ -44,16 +45,25 @@ router.post('/login', async (req, res) => {
         const isMatch = await comparePasswords(password, users[0].userPassword);
         
         if (isMatch) {
-            req.session.user = users[0];
-            res.status(200).send(`${username} Logged in successfully`);
-        } else {
+            // Generate JWT token instead of using session
+            const token = jwt.sign(
+              { id: users[0].id, username: users[0].userName },
+              process.env.JWT_SECRET,
+              { expiresIn: process.env.JWT_EXPIRES_IN }
+            );
+            
+            res.status(200).json({
+              message: `${username} logged in successfully`,
+              token: token
+            });
+          } else {
             res.status(400).send('Incorrect username or password');
+          }
+        } catch (error) {
+          console.error('Login error:', error);
+          res.status(500).send('Server error occurred');
         }
-    } catch (error) {
-        console.error('Login error:', error);
-        res.status(500).send('Server error occurred');
-    }
-});
+      });
 
 // Registration endpoint
 router.post('/register', async (req, res) => {

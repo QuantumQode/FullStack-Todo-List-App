@@ -20,14 +20,16 @@ function Login() {
     setLoginSubmitted(true);
     
     try {
-      const response = await axios.post(`${process.env.BACKEND_URL}/login`, {
+      const response = await axios.post('http://localhost:3001/auth/login', {
         username: usernameLogin,
         password: passwordLogin
-      }, 
-      { withCredentials: true });
-
-      setLoginMessage({ type: 'success', message: response.data });
-      navigate('/dashboard'); // Redirect to dashboard after successful login
+      });
+  
+      // Store the token in localStorage
+      localStorage.setItem('token', response.data.token);
+      
+      setLoginMessage({ type: 'success', message: response.data.message });
+      navigate('/dashboard');
     } catch (error) {
       if (error.response) {
         setLoginMessage({ type: 'error', message: error.response.data });

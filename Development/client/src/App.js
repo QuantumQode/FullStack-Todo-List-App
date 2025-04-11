@@ -27,15 +27,16 @@ const AuthRoute = ({ element }) => {
   return element;
 };
 
+// In client/src/App.js
 function App() {
   return (
     <Router>
       <div className="App">
         <Routes>
           <Route path="/" element={<Navigate to="/login" />} />
-          <Route path="/login" element={<Login />} />
-          <Route path="/register" element={<Register />} />
-          <Route path="/dashboard" element={<Dashboard />} />
+          <Route path="/login" element={<AuthRoute element={<Login />} />} />
+          <Route path="/register" element={<AuthRoute element={<Register />} />} />
+          <Route path="/dashboard" element={<ProtectedRoute element={<Dashboard />} />} />
         </Routes>
       </div>
     </Router>
