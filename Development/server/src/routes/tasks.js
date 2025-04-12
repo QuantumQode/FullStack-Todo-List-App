@@ -5,6 +5,9 @@ const db = require('../config/db');
 const authMiddleware = require('../middleware/auth');
 const { validateTask } = require('../middleware/validation');
 
+
+console.log('Tasks routes file loaded');
+
 // Utility function to query database (Promise wrapper)
 const queryDB = (sql, params) => {
     return new Promise((resolve, reject) => {
@@ -35,6 +38,7 @@ router.get('/', async (req, res) => {
 
 // POST create a new task
 router.post('/', validateTask, async (req, res) => {
+    console.log('POST /tasks endpoint hit');
     try {
         const { title, description, priority, dueDate } = req.body;
         const userId = req.user.id;

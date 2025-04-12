@@ -42,8 +42,6 @@ app.use("/auth", authRoutes);
 const taskRoutes = require('./src/routes/tasks');
 app.use("/tasks", taskRoutes);
 
-
-
 app.listen(3001, () => {
   console.log('Server is running on port 3001');
 });
