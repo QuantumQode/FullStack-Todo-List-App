@@ -100,10 +100,31 @@ router.put('/:id', validateTask, async (req, res) => {
             return res.status(404).send('Task not found or not authorized');
         }
         
-        // Update the task
+        // Get current task data to fill in any missing fields
+        const currentTask = tasks[0];
+        
+        // Format the date properly for MySQL
+        let formattedDueDate = null;
+        if (dueDate) {
+            // Convert ISO string to MySQL datetime format
+            const date = new Date(dueDate);
+            formattedDueDate = date.toISOString().slice(0, 19).replace('T', ' ');
+        } else if (currentTask.dueDate) {
+            // Keep the existing date
+            formattedDueDate = currentTask.dueDate;
+        }
+        
+        // Update the task with properly formatted date
         await queryDB(
             'UPDATE tasks SET title = ?, description = ?, status = ?, priority = ?, dueDate = ? WHERE id = ?',
-            [title, description, status, priority, dueDate, taskId]
+            [
+                title || currentTask.title, 
+                description !== undefined ? description : currentTask.description, 
+                status || currentTask.status,
+                priority || currentTask.priority, 
+                formattedDueDate,
+                taskId
+            ]
         );
         
         const updatedTask = await queryDB('SELECT * FROM tasks WHERE id = ?', [taskId]);
