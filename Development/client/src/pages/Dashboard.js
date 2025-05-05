@@ -14,6 +14,10 @@ function Dashboard() {
     dueDate: ''
   });
   const [editingTask, setEditingTask] = useState(null);
+
+  const [statusFilter, setStatusFilter] = useState('all');
+  const [priorityFilter, setPriorityFilter] = useState('all');
+  const [searchFilter, setSearchFilter] = useState('');
   
   const navigate = useNavigate();
   
@@ -135,6 +139,33 @@ function Dashboard() {
     authService.logout();
     navigate('/login');
   };
+
+  const getFilteredTasks = () => {
+    return tasks.filter(task => {
+      // Status filter
+      if (statusFilter !== 'all' && task.status !== statusFilter) {
+        return false;
+      }
+      
+      // Priority filter
+      if (priorityFilter !== 'all' && task.priority !== priorityFilter) {
+        return false;
+      }
+      
+      // Search filter (case insensitive)
+      if (searchFilter && !task.title.toLowerCase().includes(searchFilter.toLowerCase())) {
+        return false;
+      }
+      
+      return true;
+    });
+  };
+  
+  const resetFilters = () => {
+    setStatusFilter('all');
+    setPriorityFilter('all');
+    setSearchFilter('');
+  };
   
   return (
     <div className="dashboard-container">
@@ -199,6 +230,54 @@ function Dashboard() {
         </form>
       </section>
       
+
+      <section className="filter-section">
+        <h2>Filter Tasks</h2>
+        <div className="filter-controls">
+          <div className="form-group">
+            <label htmlFor="statusFilter">Status</label>
+            <select 
+              id="statusFilter" 
+              value={statusFilter} 
+              onChange={(e) => setStatusFilter(e.target.value)}
+            >
+              <option value="all">All</option>
+              <option value="pending">Pending</option>
+              <option value="completed">Completed</option>
+            </select>
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="priorityFilter">Priority</label>
+            <select 
+              id="priorityFilter" 
+              value={priorityFilter} 
+              onChange={(e) => setPriorityFilter(e.target.value)}
+            >
+              <option value="all">All</option>
+              <option value="high">High</option>
+              <option value="medium">Medium</option>
+              <option value="low">Low</option>
+            </select>
+          </div>
+          
+          <div className="form-group">
+            <label htmlFor="searchFilter">Search</label>
+            <input 
+              type="text" 
+              id="searchFilter" 
+              placeholder="Search by title..." 
+              value={searchFilter} 
+              onChange={(e) => setSearchFilter(e.target.value)} 
+            />
+          </div>
+          
+          <button className="btn reset-btn" onClick={resetFilters}>
+            Reset Filters
+          </button>
+        </div>
+      </section>
+
       <section className="tasks-section">
         <h2>Your Tasks</h2>
         
@@ -207,52 +286,70 @@ function Dashboard() {
         ) : tasks.length === 0 ? (
           <p>No tasks yet. Add one above!</p>
         ) : (
-          <div className="task-list">
-            {tasks.map(task => (
-              <div 
-                key={task.id} 
-                className={`task-item ${task.status === 'completed' ? 'completed' : ''} priority-${task.priority}`}
-              >
-                <div className="task-header">
-                  <h3>{task.title}</h3>
-                  <div className="task-actions">
-                    <button 
-                      className="status-btn"
-                      onClick={() => handleToggleStatus(task)}
-                    >
-                      {task.status === 'completed' ? 'Mark Incomplete' : 'Mark Complete'}
-                    </button>
-                    <button 
-                      className="edit-btn"
-                      onClick={() => handleEditClick(task)}
-                    >
-                      Edit
-                    </button>
-                    <button 
-                      className="delete-btn"
-                      onClick={() => handleDeleteTask(task.id)}
-                    >
-                      Delete
-                    </button>
-                  </div>
-                </div>
-                
-                <p className="task-description">{task.description}</p>
-                
-                <div className="task-meta">
-                  <span className={`priority priority-${task.priority}`}>
-                    {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
-                  </span>
-                  
-                  {task.dueDate && (
-                    <span className="due-date">
-                      Due: {new Date(task.dueDate).toLocaleString()}
-                    </span>
-                  )}
-                </div>
+          <>
+            {/* Add active filters indicator */}
+            {(statusFilter !== 'all' || priorityFilter !== 'all' || searchFilter !== '') && (
+              <div className="active-filters">
+                <p>
+                  Active filters: 
+                  {statusFilter !== 'all' && <span className="filter-tag">Status: {statusFilter}</span>}
+                  {priorityFilter !== 'all' && <span className="filter-tag">Priority: {priorityFilter}</span>}
+                  {searchFilter !== '' && <span className="filter-tag">Search: "{searchFilter}"</span>}
+                </p>
               </div>
-            ))}
-          </div>
+            )}
+            
+            <div className="task-list">
+              {getFilteredTasks().length === 0 ? (
+                <p>No tasks match your filters.</p>
+              ) : (
+                getFilteredTasks().map(task => (
+                  <div 
+                    key={task.id} 
+                    className={`task-item ${task.status === 'completed' ? 'completed' : ''} priority-${task.priority}`}
+                  >
+                    <div className="task-header">
+                      <h3>{task.title}</h3>
+                      <div className="task-actions">
+                        <button 
+                          className="status-btn"
+                          onClick={() => handleToggleStatus(task)}
+                        >
+                          {task.status === 'completed' ? 'Mark Incomplete' : 'Mark Complete'}
+                        </button>
+                        <button 
+                          className="edit-btn"
+                          onClick={() => handleEditClick(task)}
+                        >
+                          Edit
+                        </button>
+                        <button 
+                          className="delete-btn"
+                          onClick={() => handleDeleteTask(task.id)}
+                        >
+                          Delete
+                        </button>
+                      </div>
+                    </div>
+                    
+                    <p className="task-description">{task.description}</p>
+                    
+                    <div className="task-meta">
+                      <span className={`priority priority-${task.priority}`}>
+                        {task.priority.charAt(0).toUpperCase() + task.priority.slice(1)}
+                      </span>
+                      
+                      {task.dueDate && (
+                        <span className="due-date">
+                          Due: {new Date(task.dueDate).toLocaleString()}
+                        </span>
+                      )}
+                    </div>
+                  </div>
+                ))
+              )}
+            </div>
+          </>
         )}
       </section>
       

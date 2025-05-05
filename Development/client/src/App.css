@@ -327,3 +327,54 @@ select {
 .cancel-btn {
   background-color: #555;
 }
+
+
+.filter-section {
+  background-color: var(--secondary-color);
+  padding: 20px;
+  border-radius: 8px;
+  margin-bottom: 20px;
+}
+
+.filter-controls {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 15px;
+  align-items: flex-end;
+}
+
+.filter-controls .form-group {
+  flex: 1;
+  min-width: 150px;
+}
+
+.reset-btn {
+  background-color: #555;
+  margin: 0;
+  height: 38px;
+  width: auto;
+  padding: 0 15px;
+}
+
+.active-filters {
+  margin-bottom: 15px;
+}
+
+.filter-tag {
+  display: inline-block;
+  margin-left: 8px;
+  padding: 3px 8px;
+  border-radius: 4px;
+  background-color: rgba(255, 255, 255, 0.1);
+  font-size: 12px;
+}
+
+@media (max-width: 768px) {
+  .filter-controls {
+    flex-direction: column;
+  }
+  
+  .filter-controls .form-group {
+    width: 100%;
+  }
+}
