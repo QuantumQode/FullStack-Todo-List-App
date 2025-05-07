@@ -153,6 +153,13 @@ input {
   margin-bottom: 30px;
 }
 
+.welcome-message {
+  margin: 0;
+  font-size: 16px;
+  color: var(--success-color);
+  margin-top: 5px;
+}
+
 .logout-btn {
   background-color: var(--error-color);
 }

@@ -25,8 +25,9 @@ function Login() {
         password: passwordLogin
       });
   
-      // Store the token in localStorage
+      // Store the token and username in localStorage
       localStorage.setItem('token', response.data.token);
+      localStorage.setItem('username', usernameLogin);
       
       setLoginMessage({ type: 'success', message: response.data.message });
       navigate('/dashboard');

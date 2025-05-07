@@ -7,6 +7,7 @@ function Dashboard() {
   const [tasks, setTasks] = useState([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState('');
+  const [username, setUsername] = useState('');
   const [newTask, setNewTask] = useState({
     title: '',
     description: '',
@@ -24,6 +25,11 @@ function Dashboard() {
   // Fetch tasks on component mount
   useEffect(() => {
     fetchTasks();
+    // Get username from localStorage
+    const storedUsername = localStorage.getItem('username');
+    if (storedUsername) {
+      setUsername(storedUsername);
+    }
   }, []);
   
   // Fetch all tasks
@@ -137,6 +143,7 @@ function Dashboard() {
   // Handle logout
   const handleLogout = () => {
     authService.logout();
+    localStorage.removeItem('username');
     navigate('/login');
   };
 
@@ -170,7 +177,10 @@ function Dashboard() {
   return (
     <div className="dashboard-container">
       <header className="dashboard-header">
-        <h1>Task Dashboard</h1>
+        <div>
+          <h1>Task Dashboard</h1>
+          {username && <p className="welcome-message">Welcome, {username}!</p>}
+        </div>
         <button className="btn logout-btn" onClick={handleLogout}>Logout</button>
       </header>
       
